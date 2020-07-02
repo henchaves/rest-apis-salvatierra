@@ -17,9 +17,7 @@ class Item(Resource):
 
     @jwt_required()
     def get(self, name):
-        item = next(
-            filter(lambda x: x["name"] == name, items), None
-        )  # First item matched by the filter function. If next doesn't find an item, it will return a None
+        item = next(filter(lambda x: x["name"] == name, items), None)  # First item matched by the filter function. If next doesn't find an item, it will return a None
         return {"item": item}, 200 if item else 404
 
     def post(self, name):
@@ -34,6 +32,17 @@ class Item(Resource):
         global items
         items = list(filter(lambda x: x["name"] != name, items))
         return {"message": "Item deleted."}
+    
+    def put(self, name):
+        data = request.get_json()
+        item = next(filter(lambda x: x["name"] == name, items), None)
+        if item is None:
+            item = {"name": name, "price": data["price"]}
+            items.append(item)
+            return item, 201
+        else:
+            item.update(data)
+            return item, 200
 
 
 class ItemList(Resource):
