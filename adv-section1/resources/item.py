@@ -1,31 +1,34 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import (
-    jwt_required,
-    fresh_jwt_required,
-)
+from flask_jwt_extended import jwt_required, fresh_jwt_required
 from models.item import ItemModel
 
+BLANK_ERROR = "The field '{}' cannot be left blank."
+NAME_ALREADY_EXISTS = "An item with name '{}' already exists."
+ERROR_INSERTING = "An error ocurred while inserting the item."
+ERROR_UPDATING = "An error ocurred while updating the item."
+ITEM_NOT_FOUND = "Item not found."
+ITEM_DELETED = "Item deleted."
 
 class Item(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "price", type=float, required=True, help="This field cannot be left blank!",
+        "price", type=float, required=True, help=BLANK_ERROR.format("price"),
     )
     parser.add_argument(
-        "store_id", type=int, required=True, help="Every item needs a store id.",
+        "store_id", type=int, required=True, help=BLANK_ERROR.format("store_id"),
     )
 
     def get(self, name: str):
         item = ItemModel.find_by_name(name)
         if item:
             return item.json()
-        return {"message": "Item not found."}, 404
+        return {"message": ITEM_NOT_FOUND}, 404
 
     @fresh_jwt_required
     def post(self, name: str):
         if ItemModel.find_by_name(name):
             return (
-                {"message": f"An item with name '{name}' already exists."},
+                {"message": NAME_ALREADY_EXISTS.format(name)},
                 400,
             )
 
@@ -37,7 +40,7 @@ class Item(Resource):
             item.save_to_db()
         except:
             return (
-                {"message": "An error ocurred while inserting the item."},
+                {"message": ERROR_INSERTING},
                 500,
             )
 
@@ -48,7 +51,8 @@ class Item(Resource):
         item = ItemModel.find_by_name(name)
         if item:
             item.delete_from_db()
-        return {"message": "Item deleted."}
+            return {"message": ITEM_DELETED}, 200
+        return {"message": ITEM_NOT_FOUND}, 404
 
     def put(self, name: str):
         data = Item.parser.parse_args()
@@ -61,14 +65,14 @@ class Item(Resource):
                 item.save_to_db()
                 return item.json(), 201
             except:
-                return {"message": "An error ocurred while inserting the item."}, 500
+                return {"message": ERROR_INSERTING}, 500
         else:
             try:
                 item.price = data["price"]
                 item.save_to_db()
                 return item.json(), 200
             except:
-                return {"message": "An error ocurred while updating the item."}, 500
+                return {"message": ERROR_UPDATING}, 500
 
 
 class ItemList(Resource):
