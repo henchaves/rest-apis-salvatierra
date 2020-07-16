@@ -3,7 +3,14 @@ from flask import json
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
-from resources.user import UserLogout, UserRegister, User, UserLogin, UserLogout, TokenRefresh
+from resources.user import (
+    UserLogout,
+    UserRegister,
+    User,
+    UserLogin,
+    UserLogout,
+    TokenRefresh,
+)
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
@@ -16,25 +23,28 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["PROPAGATE_EXCEPTIONS"] = True
 app.config["JWT_BLACKLIST_ENABLED"] = True
 app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
-app.config["JWT_SECRET_KEY"] ="henrique"
+app.config["JWT_SECRET_KEY"] = "henrique"
 # app.secret_key = "henrique"
 api = Api(app)
 db.init_app(app)
+
 
 @app.before_first_request
 def create_tables():
     db.create_all()
 
+
 jwt = JWTManager(app)
+
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     return decrypted_token["jti"] in BLACKLIST
 
+
 @app.route("/")
 def index():
-    return(
-        """
+    return """
         <h1>Stores API with Flask &amp; FlaskRESTful</h1>
         <hr>
         <h3>Endpoints:</h3>
@@ -48,7 +58,7 @@ def index():
         </ul>
         <hr>
         """
-    )
+
 
 api.add_resource(Item, "/item/<string:name>")
 api.add_resource(Store, "/store/<string:name>")
@@ -59,4 +69,3 @@ api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
 api.add_resource(TokenRefresh, "/refresh")
-

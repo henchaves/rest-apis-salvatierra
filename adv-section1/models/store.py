@@ -4,6 +4,7 @@ from models.item import ItemJSON
 
 StoreJSON = Dict[str, Union[int, str, List[ItemJSON]]]
 
+
 class StoreModel(db.Model):
     __tablename__ = "stores"
 
@@ -13,26 +14,26 @@ class StoreModel(db.Model):
 
     def __init__(self, name: str):
         self.name = name
-    
+
     def json(self) -> StoreJSON:
         return {
-            "id": self.id, 
-            "name": self.name, 
-            "items": [item.json() for item in self.items.all()]}
-    
+            "id": self.id,
+            "name": self.name,
+            "items": [item.json() for item in self.items.all()],
+        }
+
     @classmethod
     def find_by_name(cls, name: str) -> "StoreModel":
         return cls.query.filter_by(name=name).first()
-    
+
     @classmethod
     def find_all(cls) -> List["StoreModel"]:
         return cls.query.all()
 
-    def save_to_db(self) -> None: #Create and Update as well
+    def save_to_db(self) -> None:  # Create and Update as well
         db.session.add(self)
         db.session.commit()
 
     def delete_from_db(self) -> None:
         db.session.delete(self)
         db.session.commit()
-    
