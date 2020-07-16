@@ -8,13 +8,15 @@ STORE_DELETED = "Store deleted."
 
 
 class Store(Resource):
-    def get(self, name: str):
+    @classmethod
+    def get(cls, name: str):
         store = StoreModel.find_by_name(name)
         if store:
             return store.json(), 200
         return {"message": STORE_NOT_FOUND}, 404
 
-    def post(self, name: str):
+    @classmethod
+    def post(cls, name: str):
         if StoreModel.find_by_name(name):
             return {"message", NAME_ALREADY_EXISTS.format(name)}, 400
 
@@ -25,7 +27,8 @@ class Store(Resource):
         except:
             return {"message": ERROR_CREATING}, 500
 
-    def delete(self, name: str):
+    @classmethod
+    def delete(cls, name: str):
         store = StoreModel.find_by_name(name)
         if store:
             store.delete_from_db()
@@ -33,5 +36,6 @@ class Store(Resource):
 
 
 class StoreList(Resource):
-    def get(self):
+    @classmethod
+    def get(cls):
         return {"stores": [store.json() for store in StoreModel.find_all()]}
