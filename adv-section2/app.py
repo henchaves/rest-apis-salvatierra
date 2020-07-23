@@ -11,7 +11,7 @@ from resources.user import (
     UserLogout,
     TokenRefresh,
 )
-
+from ma import ma
 from blacklist import BLACKLIST
 from db import db
 
@@ -25,6 +25,7 @@ app.config["JWT_SECRET_KEY"] = "henrique"
 # app.secret_key = "henrique"
 api = Api(app)
 db.init_app(app)
+ma.init_app(app)
 
 
 @app.before_first_request
