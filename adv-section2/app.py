@@ -11,6 +11,7 @@ from resources.user import (
     UserLogout,
     TokenRefresh,
 )
+from resources.item import Item, ItemList
 from ma import ma
 from blacklist import BLACKLIST
 from db import db
@@ -63,3 +64,5 @@ api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
 api.add_resource(TokenRefresh, "/refresh")
+api.add_resource(Item, "/item/<string:name>")
+api.add_resource(ItemList, "/items")
