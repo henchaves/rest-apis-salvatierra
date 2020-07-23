@@ -1,18 +1,21 @@
 from flask_restful import Resource
 from models.store import StoreModel
+from schemas.store import StoreSchema
 
 NAME_ALREADY_EXISTS = "A store with name '{}' already exists."
 ERROR_CREATING = "An error ocurred while creating the store."
 STORE_NOT_FOUND = "Store not found."
 STORE_DELETED = "Store deleted."
 
+store_schema = StoreSchema()
+store_list_schema = StoreSchema(many=True)
 
 class Store(Resource):
     @classmethod
     def get(cls, name: str):
         store = StoreModel.find_by_name(name)
         if store:
-            return store.json(), 200
+            return store_schema.dump(store), 200
         return {"message": STORE_NOT_FOUND}, 404
 
     @classmethod
@@ -20,10 +23,10 @@ class Store(Resource):
         if StoreModel.find_by_name(name):
             return {"message", NAME_ALREADY_EXISTS.format(name)}, 400
 
-        store = StoreModel(name)
+        store = StoreModel(name=name) #No __init__ method on model
         try:
             store.save_to_db()
-            return store.json(), 201
+            return store_schema.dump(store), 201
         except:
             return {"message": ERROR_CREATING}, 500
 
@@ -38,4 +41,4 @@ class Store(Resource):
 class StoreList(Resource):
     @classmethod
     def get(cls):
-        return {"stores": [store.json() for store in StoreModel.find_all()]}
+        return {"stores": store_list_schema.dump(StoreModel.find_all())}, 200
