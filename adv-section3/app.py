@@ -9,6 +9,7 @@ from resources.user import (
     User,
     UserLogin,
     UserLogout,
+    UserConfirm,
     TokenRefresh,
 )
 from resources.item import Item, ItemList
@@ -64,6 +65,7 @@ api.add_resource(UserRegister, "/register")
 api.add_resource(User, "/user/<int:user_id>")
 api.add_resource(UserLogin, "/login")
 api.add_resource(UserLogout, "/logout")
+api.add_resource(UserConfirm, "/user_confirm/<int:user_id>")
 api.add_resource(TokenRefresh, "/refresh")
 api.add_resource(Item, "/item/<string:name>")
 api.add_resource(ItemList, "/items")
