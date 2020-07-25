@@ -1,3 +1,4 @@
+from libs.mailgun import MailGunException
 import traceback
 from flask import request, render_template, make_response
 from flask_restful import Resource
@@ -13,6 +14,7 @@ from werkzeug.security import safe_str_cmp
 from models.user import UserModel
 from schemas.user import UserSchema
 from blacklist import BLACKLIST
+from libs.mailgun import MailGunException
 
 BLANK_ERROR = "The field '{}' cannot be left blank."
 USER_ALREADY_EXISTS = "A user with that username already exists."
@@ -43,9 +45,11 @@ class UserRegister(Resource):
             user.save_to_db()
             user.send_confirmation_email()
             return {"message": SUCCESS_REGISTER_MESSAGE}, 201
+        except MailGunException as e:
+            user.delete_from_db()
+            return {"message": str(e)}, 500
         except:
             traceback.print_exc()
-            user.delete_from_db()
             return {"message": FAILED_TO_CREATE}, 500
 
 
