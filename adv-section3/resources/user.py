@@ -110,4 +110,4 @@ class UserConfirm(Resource):
         user.activated = True
         user.save_to_db()
         headers = {"Content-Type": "text/html"}
-        return make_response(render_template("confirmation_page.html", email=user.username), 200, headers)
+        return make_response(render_template("confirmation_page.html", email=user.email), 200, headers)
