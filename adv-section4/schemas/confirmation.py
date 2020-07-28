@@ -1,7 +1,7 @@
 from ma import ma 
 from models.confirmation import ConfirmationModel
 
-class ConfirmationModel(ma.SQLAlchemyAutoSchema):
+class ConfirmationSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = ConfirmationModel
         load_only = ("user",)
