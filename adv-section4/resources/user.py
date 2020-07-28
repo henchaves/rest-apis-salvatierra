@@ -1,5 +1,7 @@
-from libs.mailgun import MailGunException
 import traceback
+
+from werkzeug.security import safe_str_cmp
+from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import (
     create_access_token,
@@ -9,7 +11,6 @@ from flask_jwt_extended import (
     jwt_required,
     get_raw_jwt,
 )
-from werkzeug.security import safe_str_cmp
 from models.user import UserModel
 from schemas.user import UserSchema
 from blacklist import BLACKLIST
@@ -33,7 +34,8 @@ user_schema = UserSchema()
 class UserRegister(Resource):
     @classmethod
     def post(cls):
-        user = user_schema.load(request.get_json())
+        user_json = request.get_json()
+        user = user_schema.load(user_json)
 
         if UserModel.find_by_username(user.username):
             return {"message": USER_ALREADY_EXISTS}, 400
@@ -43,6 +45,7 @@ class UserRegister(Resource):
 
         try:
             user.save_to_db()
+            
             confirmation = ConfirmationModel(user.id)
             confirmation.save_to_db()
             user.send_confirmation_email()

@@ -51,10 +51,10 @@ class ConfirmationByUser(Resource):
             {
                 "current_time": int(time()),
                 "confirmation": [
-                    confirmation_schema.dump(each) for each in user.confirmation.order_by(ConfirmationModel.expired_at)
-                ],
+                    confirmation_schema.dump(each) for each in user.confirmation.order_by(ConfirmationModel.expire_at)
+                ]
             },
-            200,
+            200
         )
     
     @classmethod

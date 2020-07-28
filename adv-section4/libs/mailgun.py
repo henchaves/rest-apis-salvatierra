@@ -40,4 +40,4 @@ class Mailgun:
         if response.status_code != 200:
             raise MailGunException(ERROR_SENDING_EMAIL)
 
-        return reponse
+        return response
