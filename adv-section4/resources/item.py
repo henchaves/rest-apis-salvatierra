@@ -4,7 +4,6 @@ from flask_jwt_extended import jwt_required, fresh_jwt_required
 from models.item import ItemModel
 from schemas.item import ItemSchema
 
-BLANK_ERROR = "The field '{}' cannot be left blank."
 NAME_ALREADY_EXISTS = "An item with name '{}' already exists."
 ERROR_INSERTING = "An error ocurred while inserting the item."
 ERROR_UPDATING = "An error ocurred while updating the item."
