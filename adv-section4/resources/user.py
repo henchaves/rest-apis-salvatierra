@@ -17,7 +17,6 @@ from blacklist import BLACKLIST
 from libs.mailgun import MailGunException
 from models.confirmation import ConfirmationModel
 
-BLANK_ERROR = "The field '{}' cannot be left blank."
 USER_ALREADY_EXISTS = "A user with that username already exists."
 EMAIL_ALREADY_EXISTS = "A user with that email already exists."
 USER_NOT_FOUND = "User not found."
